@@ -129,26 +129,40 @@ def solution(guest_num, guest_list, relation_num, relation_list, k):
     if k <= MAX:
         return get_graph_nodes(sorted_connected_graphs_nums[0][0])[:k]
     else:
-        return (guest_list - get_graph_nodes(sorted_connected_graphs_nums[0][0]))[:k]
+        not_connected_nodes = []
+        not_connected_nodes += list(set(guest_list) - set(connected_guest_list))
+        # print(not_connected_nodes)
+
+        # try从每个连通图中找到一个不在其他任何连通图里的点
+        # 如果没有，就找下一个连通子图
+        connected_guests_count = {}
+        for connected_graph in connected_graphs:
+            for node in get_graph_nodes(connected_graph):
+                if node not in connected_guests_count:
+                    connected_guests_count[node] = 1
+                else:
+                    connected_guests_count[node] += 1
+
+        for guest, count in connected_guests_count.items():
+            if count == 1:
+                not_connected_nodes.append(guest)
+
+        return not_connected_nodes[:k]
 
 
 if __name__ == '__main__':
-    ## TEST SAMPLES
-    # 7
-    # ['1', '2', '3', '4', '5', '6', '7']
-    # 8
-    # [('1', '2'), ('1', '3'), ('1', '4'), ('2', '3'), ('2', '4'), ('3', '4'), ('5', '6'), ('4', '7')]
-    # 4
+    # # TEST SAMPLES
+    # k_list = solution(guest_num=4, guest_list=['a', 'b', 'c', 'd'],
+    #                   relation_num=2, relation_list=[('a', 'b'), ('a', 'c')],
+    #                   k=3)
 
-    # 4
-    # ['a', 'b', 'c', 'd']
-    # 3
-    # [('a', 'b'), ('a', 'c'), ('b', 'c')]
-    # 3
+    # k_list = solution(guest_num=4, guest_list=['a', 'b', 'c', 'd'],
+    #                   relation_num=3, relation_list=[('a', 'b'), ('a', 'c'), ('b', 'c')],
+    #                   k=3)
 
-    k_list = solution(guest_num=4, guest_list=['a', 'b', 'c', 'd'],
-                      relation_num=3, relation_list=[('a', 'b'), ('a', 'c'), ('b', 'c')],
-                      k=3)
+    k_list = solution(guest_num=7, guest_list=['1', '2', '3', '4', '5', '6', '7'],
+                      relation_num=8, relation_list=[('1', '2'), ('1', '3'), ('1', '4'), ('2', '3'), ('2', '4'), ('3', '4'), ('5', '6'), ('4', '7')],
+                      k=4)
     print(k_list)
 
 
